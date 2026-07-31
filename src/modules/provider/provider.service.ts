@@ -19,7 +19,7 @@ export const updateOrderStatus = async (
   });
   if (!order) throw new Error("Order not found");
 
-  const ownsOrder = order.items.some((i) => i.gearItem.providerId === providerId);
+  const ownsOrder = order.items.some((i: any) => i.gearItem.providerId === providerId);
   if (!ownsOrder) throw new Error("Forbidden: not your order");
 
   return prisma.rentalOrder.update({ where: { id: orderId }, data: { status } });

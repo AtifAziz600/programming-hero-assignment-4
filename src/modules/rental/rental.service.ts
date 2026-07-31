@@ -10,7 +10,7 @@ export const createRentalOrder = async (
   const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
   if (days <= 0) throw new Error("End date must be after start date");
 
-  return prisma.$transaction(async (tx) => {
+  return prisma.$transaction(async (tx: any) => {
     let total = 0;
     const orderItemsData = [];
 

@@ -3,13 +3,13 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {
-    "dev": "nodemon --exec tsx src/server.ts",
-    "build": "tsc",
-    "start": "node dist/server.js",
-    "seed": "tsx prisma/seed.ts",
-    "db:seed": "tsx prisma/seed.ts"
-  },
+"scripts": {
+  "dev": "nodemon --exec tsx src/server.ts",
+  "build": "npm run db:generate && tsc",
+  "start": "tsx src/server.ts",
+  "db:generate": "prisma generate",
+  "db:seed": "tsx prisma/seed.ts"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
