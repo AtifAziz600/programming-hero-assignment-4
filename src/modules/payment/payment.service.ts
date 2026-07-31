@@ -1,6 +1,10 @@
 // src/modules/payment/payment.service.ts
 import prisma from "../../config/db";
-import crypto from "crypto";
+import Stripe from "stripe";
+
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY || "", {
+  apiVersion: "2024-06-20",
+});
 
 export const createPayment = async (
   userId: string,
@@ -9,9 +13,45 @@ export const createPayment = async (
   const rental = await prisma.rentalOrder.findUnique({ where: { id: data.rentalOrderId } });
   if (!rental) throw new Error("Rental order not found");
 
-  // In a real integration: call Stripe/SSLCommerz SDK here to create a session,
-  // then store the returned session/transaction id below.
-  const transactionId = `TXN-${crypto.randomUUID()}`;
+  if (data.method === "STRIPE") {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      success_url: process.env.STRIPE_SUCCESS_URL || "http://localhost:5000/api/payments/success",
+      cancel_url: process.env.STRIPE_CANCEL_URL || "http://localhost:5000/api/payments/cancel",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: `Rental Order ${rental.id}`,
+            },
+            unit_amount: Math.round(Number(rental.totalAmount) * 100),
+          },
+          quantity: 1,
+        },
+      ],
+      metadata: {
+        rentalOrderId: rental.id,
+        userId,
+      },
+    });
+
+    const payment = await prisma.payment.create({
+      data: {
+        transactionId: session.id,
+        amount: rental.totalAmount,
+        method: data.method,
+        status: "PENDING",
+        rentalOrderId: rental.id,
+        userId,
+      },
+    });
+
+    return { payment, redirectUrl: session.url || "" };
+  }
+
+  const transactionId = `TXN-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`;
 
   const payment = await prisma.payment.create({
     data: {
@@ -24,8 +64,7 @@ export const createPayment = async (
     },
   });
 
-  // return this to the frontend so it can redirect to Stripe Checkout / SSLCommerz gateway page
-  return { payment, redirectUrl: `https://sandbox-payment-gateway.example/pay/${transactionId}` };
+  return { payment, redirectUrl: "" };
 };
 
 // Called by the gateway's webhook/callback

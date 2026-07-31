@@ -1,9 +1,20 @@
 import { Request, Response } from "express";
 import * as rentalService from "./rental.service";
+import { z } from "zod";
+
+const createRentalSchema = z.object({
+  startDate: z.string().min(1, "Start date is required"),
+  endDate: z.string().min(1, "End date is required"),
+  items: z.array(z.object({
+    gearItemId: z.string().min(1, "Gear item ID is required"),
+    quantity: z.number().int().positive("Quantity must be a positive integer"),
+  })).min(1, "At least one item is required"),
+});
 
 export const createRentalOrder = async (req: Request, res: Response) => {
   const customerId = (req as any).user.id;
-  const order = await rentalService.createRentalOrder(customerId, req.body);
+  const data = createRentalSchema.parse(req.body);
+  const order = await rentalService.createRentalOrder(customerId, data);
   res.status(201).json({ success: true, data: order });
 };
 
