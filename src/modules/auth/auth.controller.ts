@@ -22,6 +22,7 @@ export const login = async (req: Request, res: Response) => {
 };
 
 export const getMe = async (req: Request, res: Response) => {
-  // req.user is attached by the auth middleware — see Step 5
-  res.status(200).json({ success: true, data: (req as any).user });
+  const user = (req as any).user;
+  const { password, ...safeUser } = user;
+  res.status(200).json({ success: true, data: safeUser });
 };

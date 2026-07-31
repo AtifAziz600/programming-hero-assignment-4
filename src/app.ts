@@ -25,7 +25,11 @@ app.use("/api/reviews", reviewRoutes);
 app.use("/api/provider", providerRoutes);
 app.use("/api/admin", adminRoutes);
 
-app.get("/", (_req, res) => res.send("GearUp API is running"));
+app.use("/", (_req, res) => res.send("GearUp API is running"));
+
+app.use((_req, res) => {
+  res.status(404).json({ success: false, message: "Route not found", errorDetails: undefined });
+});
 
 app.use(errorHandler);
 
