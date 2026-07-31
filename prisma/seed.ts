@@ -10,7 +10,7 @@ async function main() {
     update: {},
     create: {
       name: "System Admin",
-      email: "admin@gearup.com",
+      email: "admin@rentnest.com",
       password: adminPassword,
       role: "ADMIN",
       status: "ACTIVE",
