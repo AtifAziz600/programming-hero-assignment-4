@@ -4,7 +4,7 @@ import prisma from "../../config/db";
 import { generateToken } from "../../utils/jwt";
 
 export const registerUser = async (data: {
-  name: string; email: string; password: string; role: "CUSTOMER" | "PROVIDER";
+  name: string; email: string; password: string; role: "CUSTOMER" | "PROVIDER" | "ADMIN";
 }) => {
   const existing = await prisma.user.findUnique({ where: { email: data.email } });
   if (existing) throw new Error("Email already in use");

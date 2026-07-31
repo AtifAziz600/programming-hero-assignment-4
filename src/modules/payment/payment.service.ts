@@ -48,3 +48,13 @@ export const confirmPayment = async (transactionId: string, status: "COMPLETED" 
 export const getUserPayments = async (userId: string) => {
   return prisma.payment.findMany({ where: { userId }, include: { rentalOrder: true } });
 };
+
+export const getPaymentById = async (paymentId: string, userId: string) => {
+  const payment = await prisma.payment.findUnique({
+    where: { id: paymentId },
+    include: { rentalOrder: true },
+  });
+  if (!payment) throw new Error("Payment not found");
+  if (payment.userId !== userId) throw new Error("Forbidden");
+  return payment;
+};
