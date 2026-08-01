@@ -16,7 +16,7 @@ No authentication required.
 ```json
 {
   "name": "Alice",
-  "email": "alice@example.com",
+  "email": "alice@test.com",
   "password": "pass1234",
   "role": "CUSTOMER"
 }
