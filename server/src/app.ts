@@ -14,7 +14,10 @@ import { errorHandler } from "./middlewares/errorHandler";
 const app = express();
 
 app.use(cors({
-  origin: 'http://localhost:3000',
+  origin: [
+  'http://localhost:3000',
+  'https://programming-hero-assignment-4.onrender.com',
+  ],
   credentials: true,
 }));
 app.use(express.json());
