@@ -10,4 +10,4 @@ router.get("/users", authenticate, authorize("ADMIN"), getAllUsers);
 router.patch("/users/:id", authenticate, authorize("ADMIN"), validate(z.object({ status: z.enum(["ACTIVE", "SUSPENDED"]) })), updateUserStatus);
 router.get("/gear", authenticate, authorize("ADMIN"), getAllGearAdmin);
 router.get("/rentals", authenticate, authorize("ADMIN"), getAllRentalsAdmin);
-export default router;
+export default router;    
